@@ -1,7 +1,11 @@
 package com.lanier.violet
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 import java.net.InetAddress
 import java.net.Socket
 import java.net.UnknownHostException
@@ -17,10 +21,72 @@ object TCPClient {
 
     private var client: Socket? = null
 
-    suspend fun init() {
-        val serverIP = obtainServerIP("300")
+    suspend fun linkServer(
+        server: String,
+        onSuccess: () -> Unit,
+        onFailed: () -> Unit,
+    ) {
+        client?.run {
+            withContext(Dispatchers.IO) {
+                close()
+            }
+            delay(1000L)
+        }
+        val serverIP = obtainServerIP(server)
         client = withContext(Dispatchers.IO) {
             Socket(serverIP, 443)
+        }
+        client?.isConnected?.let {
+            if (it) {
+                onSuccess.invoke()
+                enterServer(server)
+                val `is` = client?.getInputStream()
+                val bufferedReader = BufferedReader(InputStreamReader(`is`))
+                val messageFromServer = bufferedReader.readLine()
+                println(">>>> receive : $messageFromServer")
+            }
+            else onFailed.invoke()
+        }?: onFailed.invoke()
+    }
+
+    suspend fun sendCommand(message: String) {
+        client?.let {
+            withContext(Dispatchers.IO) {
+//                val byteMsg = message.toByteArray()
+                val outputStreamWriter = OutputStreamWriter(it.getOutputStream())
+                outputStreamWriter.write(message)
+                outputStreamWriter.flush()
+            }
+        }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    suspend fun enterServer(server: String) {
+        val sb = buildString {
+            append("7467775F6C375F666F72776172640D0A486F73743A207A6F6E65")
+            append(server)
+            append("2E3137726F636F2E71712E636F6D3A3434330D0A0D0A")
+        }
+        withContext(Dispatchers.IO) {
+            sendCommand(sb)
+        }
+        withContext(Dispatchers.IO) {
+            val sb4 = buildString {
+                append("9527000000030001")
+                append(UserData.QQ)
+                append("0000000000000042")
+            }
+            val sb3 = buildString {
+                append(sb4)
+                val m = "0000${server.toLong().toHexString().uppercase()}"
+                val n = m.substring(m.length - 4, m.length)
+                append(n)
+            }
+            val sb2 = buildString {
+                append(sb3)
+                append(UserData.mainKey)
+            }
+            sendCommand(sb2)
         }
     }
 
