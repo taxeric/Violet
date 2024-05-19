@@ -1,5 +1,6 @@
 package com.lanier.violet
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.webkit.CookieManager
 import android.webkit.WebChromeClient
@@ -9,6 +10,7 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -67,9 +69,15 @@ class MainActivity : AppCompatActivity() {
                     }
                     if (url!!.contains("web2.17roco.qq.com/fcgi-bin/login")) {
                         if (htmlContent.isNotEmpty()) {
-                            UserData.mainKey = extractString(htmlContent, "&angel_key=", "&skey=")
-                            UserData.farmKey = extractString(htmlContent, "pskey=", "\"")
-                            UserData.QQ = extractString(htmlContent, "_uin=", "&ang")
+                            val isNight = htmlContent.contains("res.17roco.qq.com/swf/night.swf")
+                            if (isNight) {
+                                serverRepair()
+                            } else {
+                                UserData.mainKey =
+                                    extractString(htmlContent, "&angel_key=", "&skey=")
+                                UserData.farmKey = extractString(htmlContent, "pskey=", "\"")
+                                UserData.QQ = extractString(htmlContent, "_uin=", "&ang")
+                            }
                         }
                     }
                 }
@@ -111,6 +119,19 @@ class MainActivity : AppCompatActivity() {
                 println(">>>> 设置cookie $mCookie")
             }
         }
+    }
+
+    private fun serverRepair() {
+        val onClickListener = DialogInterface.OnClickListener { p0, p1 ->
+            if (p1 == DialogInterface.BUTTON_POSITIVE) {
+                p0?.dismiss()
+            }
+        }
+        AlertDialog.Builder(this)
+            .setMessage("将于明日6点开放")
+            .setPositiveButton("确定", onClickListener)
+            .setCancelable(false)
+            .show()
     }
 
     private fun extractString(source: String, startDelimiter: String, endDelimiter: String): String {
