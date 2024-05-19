@@ -3,9 +3,7 @@ package com.lanier.violet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
+import java.io.InputStream
 import java.net.InetAddress
 import java.net.Socket
 import java.net.UnknownHostException
@@ -21,17 +19,23 @@ object TCPClient {
 
     private var client: Socket? = null
 
+    var isConnected = false
+        private set
+
     suspend fun linkServer(
         server: String,
         onSuccess: () -> Unit,
-        onFailed: () -> Unit,
+        onFailed: (Throwable) -> Unit,
     ) {
         client?.run {
-            withContext(Dispatchers.IO) {
-                close()
+            if (this.isClosed.not()) {
+                withContext(Dispatchers.IO) {
+                    close()
+                }
+                delay(1000L)
             }
-            delay(1000L)
         }
+        client = null
         val serverIP = obtainServerIP(server)
         client = withContext(Dispatchers.IO) {
             Socket(serverIP, 443)
@@ -40,22 +44,24 @@ object TCPClient {
             if (it) {
                 onSuccess.invoke()
                 enterServer(server)
-                val `is` = client?.getInputStream()
-                val bufferedReader = BufferedReader(InputStreamReader(`is`))
-                val messageFromServer = bufferedReader.readLine()
-                println(">>>> receive : $messageFromServer")
-            }
-            else onFailed.invoke()
-        }?: onFailed.invoke()
+                client?.getInputStream()?.run {
+                    receiveMsgInternal(this)
+                }
+            } else onFailed.invoke(Throwable("can't connect to server"))
+        } ?: onFailed.invoke(Throwable("can't connect to server"))
     }
 
     suspend fun sendCommand(message: String) {
         client?.let {
             withContext(Dispatchers.IO) {
-//                val byteMsg = message.toByteArray()
-                val outputStreamWriter = OutputStreamWriter(it.getOutputStream())
-                outputStreamWriter.write(message)
-                outputStreamWriter.flush()
+                try {
+                    val byteMsg = message.toByteArray()
+                    it.getOutputStream().write(byteMsg)
+                    it.getOutputStream().flush()
+                } catch (e: Exception) {
+                    isConnected = false
+                    it.close()
+                }
             }
         }
     }
@@ -90,7 +96,17 @@ object TCPClient {
         }
     }
 
-    private suspend fun obtainServerIP(server: String) : String {
+    private suspend fun receiveMsgInternal(`is`: InputStream) {
+        withContext(Dispatchers.IO) {
+            val data = `is`.readBytes()
+            processServerData(data)
+        }
+    }
+
+    private fun processServerData(data: ByteArray) {
+    }
+
+    private suspend fun obtainServerIP(server: String): String {
         var server_d = server.toDouble() / 50.0 + 2.toByte() + 3.toByte()
         var server_s = server_d.toString()
         if (server_s.substring(server_s.length - 2, server_s.length) == ".0") {
@@ -108,14 +124,14 @@ object TCPClient {
                     InetAddress.getByName(serverAddress)
                 }
             val ipAddress: String? = address.hostAddress
-            ipAddress?: defIP(server_s)
+            ipAddress ?: defIP(server_s)
         } catch (e: UnknownHostException) {
             e.printStackTrace()
             defIP(server_s)
         }
     }
 
-    private fun defIP(server_s: String) : String {
+    private fun defIP(server_s: String): String {
         return when (server_s.first()) {
             '2' -> "101.89.0.211"
             '3' -> "101.226.49.105"
