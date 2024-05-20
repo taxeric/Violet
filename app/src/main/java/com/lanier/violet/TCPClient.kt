@@ -1,7 +1,11 @@
 package com.lanier.violet
 
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.InputStream
 import java.net.InetAddress
@@ -17,89 +21,103 @@ import kotlin.random.Random
  */
 object TCPClient {
 
+    private val mainScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+
     private var client: Socket? = null
 
     var isConnected = false
         private set
 
-    suspend fun linkServer(
+    fun linkServer(
         server: String,
         onSuccess: () -> Unit,
         onFailed: (Throwable) -> Unit,
     ) {
-        client?.run {
-            if (this.isClosed.not()) {
-                withContext(Dispatchers.IO) {
-                    close()
-                }
-                delay(1000L)
+        mainScope.launch(
+            context = CoroutineExceptionHandler { coroutineContext, throwable ->
+                onFailed.invoke(throwable)
             }
-        }
-        client = null
-        val serverIP = obtainServerIP(server)
-        client = withContext(Dispatchers.IO) {
-            Socket(serverIP, 443)
-        }
-        client?.isConnected?.let {
-            if (it) {
-                onSuccess.invoke()
-                enterServer(server)
-                client?.getInputStream()?.run {
-                    receiveMsgInternal(this)
+        ) {
+            client?.run {
+                if (this.isClosed.not()) {
+                    withContext(Dispatchers.IO) {
+                        close()
+                    }
+                    delay(1000L)
                 }
-            } else onFailed.invoke(Throwable("can't connect to server"))
-        } ?: onFailed.invoke(Throwable("can't connect to server"))
+            }
+            client = null
+            val serverIP = obtainServerIP(server)
+            client = withContext(Dispatchers.IO) {
+                Socket(serverIP, 443)
+            }
+            client?.isConnected?.let {
+                if (it) {
+                    onSuccess.invoke()
+                    enterServer(server)
+                    client?.getInputStream()?.run {
+                        receiveMsgInternal(this)
+                    }
+                } else onFailed.invoke(Throwable("can't connect to server"))
+            } ?: onFailed.invoke(Throwable("can't connect to server"))
+        }
     }
 
-    suspend fun sendCommand(message: String) {
-        client?.let {
-            withContext(Dispatchers.IO) {
-                try {
-                    val byteMsg = message.toByteArray()
-                    it.getOutputStream().write(byteMsg)
-                    it.getOutputStream().flush()
-                } catch (e: Exception) {
-                    isConnected = false
-                    it.close()
+    fun sendCommand(message: String) {
+        mainScope.launch {
+            client?.let {
+                withContext(Dispatchers.IO) {
+                    try {
+                        val byteMsg = message.toByteArray()
+                        it.getOutputStream().write(byteMsg)
+                        it.getOutputStream().flush()
+                    } catch (e: Exception) {
+                        isConnected = false
+                        it.close()
+                    }
                 }
             }
         }
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    suspend fun enterServer(server: String) {
-        val sb = buildString {
-            append("7467775F6C375F666F72776172640D0A486F73743A207A6F6E65")
-            append(server)
-            append("2E3137726F636F2E71712E636F6D3A3434330D0A0D0A")
-        }
-        withContext(Dispatchers.IO) {
-            sendCommand(sb)
-        }
-        withContext(Dispatchers.IO) {
-            val sb4 = buildString {
-                append("9527000000030001")
-                append(UserData.QQ)
-                append("0000000000000042")
+    private fun enterServer(server: String) {
+        mainScope.launch {
+            val sb = buildString {
+                append("7467775F6C375F666F72776172640D0A486F73743A207A6F6E65")
+                append(server)
+                append("2E3137726F636F2E71712E636F6D3A3434330D0A0D0A")
             }
-            val sb3 = buildString {
-                append(sb4)
-                val m = "0000${server.toLong().toHexString().uppercase()}"
-                val n = m.substring(m.length - 4, m.length)
-                append(n)
+            withContext(Dispatchers.IO) {
+                sendCommand(sb)
             }
-            val sb2 = buildString {
-                append(sb3)
-                append(UserData.mainKey)
+            withContext(Dispatchers.IO) {
+                val sb4 = buildString {
+                    append("9527000000030001")
+                    append(UserData.QQ)
+                    append("0000000000000042")
+                }
+                val sb3 = buildString {
+                    append(sb4)
+                    val m = "0000${server.toLong().toHexString().uppercase()}"
+                    val n = m.substring(m.length - 4, m.length)
+                    append(n)
+                }
+                val sb2 = buildString {
+                    append(sb3)
+                    append(UserData.mainKey)
+                }
+                sendCommand(sb2)
             }
-            sendCommand(sb2)
         }
     }
 
     private suspend fun receiveMsgInternal(`is`: InputStream) {
         withContext(Dispatchers.IO) {
             val data = `is`.readBytes()
-            processServerData(data)
+            withContext(Dispatchers.Main) {
+                processServerData(data)
+            }
         }
     }
 
