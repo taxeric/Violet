@@ -48,6 +48,7 @@ object TCPClient {
             }
             client = null
             val serverIP = obtainServerIP(server)
+            println(">>>> obtain server ip = $serverIP")
             client = withContext(Dispatchers.IO) {
                 Socket(serverIP, 443)
             }
@@ -63,18 +64,22 @@ object TCPClient {
         }
     }
 
-    fun sendCommand(message: String) {
-        mainScope.launch {
+    fun sendCommand(message: String, onFailed: ((Throwable) -> Unit)? = null) {
+        mainScope.launch(
+            CoroutineExceptionHandler { _, throwable ->
+                println(">>>> send command failed ${throwable.message}")
+                onFailed?.invoke(throwable)
+                isConnected = false
+                client?.close()
+            }
+        ) {
             client?.let {
                 withContext(Dispatchers.IO) {
-                    try {
-                        val byteMsg = message.toByteArray()
-                        it.getOutputStream().write(byteMsg)
-                        it.getOutputStream().flush()
-                    } catch (e: Exception) {
-                        isConnected = false
-                        it.close()
-                    }
+                    println(">>>> send command $message")
+                    val byteMsg = message.toByteArray()
+                    println(">>>> send command byte $byteMsg")
+                    it.getOutputStream().write(byteMsg)
+                    it.getOutputStream().flush()
                 }
             }
         }
@@ -131,22 +136,23 @@ object TCPClient {
             server_d -= 1.toByte()
             server_s = server_d.toInt().toString()
         }
-        val serverAddress = buildString {
-            append("zone")
-            append(server_s)
-            append(".17roco.qq.com")
-        }
-        return try {
-            val address: InetAddress =
-                withContext(Dispatchers.IO) {
-                    InetAddress.getByName(serverAddress)
-                }
-            val ipAddress: String? = address.hostAddress
-            ipAddress ?: defIP(server_s)
-        } catch (e: UnknownHostException) {
-            e.printStackTrace()
-            defIP(server_s)
-        }
+        return defIP(server_s)
+//        val serverAddress = buildString {
+//            append("zone")
+//            append(server_s)
+//            append(".17roco.qq.com")
+//        }
+//        return try {
+//            val address: InetAddress =
+//                withContext(Dispatchers.IO) {
+//                    InetAddress.getByName(serverAddress)
+//                }
+//            val ipAddress: String? = address.hostAddress
+//            ipAddress ?: defIP(server_s)
+//        } catch (e: UnknownHostException) {
+//            e.printStackTrace()
+//            defIP(server_s)
+//        }
     }
 
     private fun defIP(server_s: String): String {
