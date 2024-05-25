@@ -1,5 +1,6 @@
-package com.lanier.violet
+package com.lanier.violet.client
 
+import com.lanier.violet.UserData
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +18,7 @@ import kotlin.random.Random
  *
  * 保持与服务器连接的客户端
  */
-object TCPClient {
+object RocoServerClient {
 
     private val mainScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
@@ -49,7 +50,7 @@ object TCPClient {
         onFailed: (Throwable) -> Unit,
     ) {
         mainScope.launch(
-            context = CoroutineExceptionHandler { coroutineContext, throwable ->
+            context = CoroutineExceptionHandler { _, throwable ->
                 onFailed.invoke(throwable)
             }
         ) {
@@ -75,8 +76,8 @@ object TCPClient {
                     client?.getInputStream()?.run {
                         receiveMsgInternal(this)
                     }
-                } else onFailed.invoke(Throwable("can't connect to server"))
-            } ?: onFailed.invoke(Throwable("can't connect to server"))
+                } else onFailed.invoke(Throwable("can't connect to server, has not connect to server"))
+            } ?: onFailed.invoke(Throwable("can't connect to server, the connect state is null"))
         }
     }
 
@@ -133,11 +134,14 @@ object TCPClient {
                 val message = buffer.toHexString()
                 println(">>>> message = $message")
                 val prefix = message.substring(0, 16)
-                when (prefix) {
-                    "9527000000010002" -> {
-                        enterServerMessageHandle()
+                withContext(Dispatchers.Main) {
+                    when (prefix) {
+                        "9527000000010002" -> {
+                            enterServerMessageHandle()
+                        }
+
+                        else -> {}
                     }
-                    else -> {}
                 }
             }
         }

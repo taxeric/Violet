@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.toColorInt
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
+import com.lanier.violet.client.RocoServerClient
 import com.lanier.violet.databinding.ActivityLoginBinding
 import org.apache.commons.text.StringEscapeUtils
 import kotlin.random.Random
@@ -80,7 +81,7 @@ class LoginActivity(
                                     if (viewbinding.cbRandomChannel.isChecked.not()) {
                                         val inputChannel = viewbinding.tieChannel.text?.toString()
                                         inputChannel?.let {
-                                            TCPClient.channel = it
+                                            RocoServerClient.channel = it
                                             startAct<MainActivity> {  }
                                         } ?: toast("输入频道~")
                                     }
