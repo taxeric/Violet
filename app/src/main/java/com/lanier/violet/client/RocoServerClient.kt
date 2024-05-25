@@ -3,6 +3,7 @@ package com.lanier.violet.client
 import com.lanier.violet.UserData
 import com.lanier.violet.ext.post
 import com.lanier.violet.feature.main.event.ClientEvent
+import com.lanier.violet.feature.main.event.SceneEvent
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -141,13 +142,18 @@ object RocoServerClient {
         withContext(Dispatchers.IO) {
             val buffer = ByteArray(1024)
             while (`is`.read(buffer) != -1) {
-                val message = buffer.toHexString()
+                val message = buffer.toHexString().uppercase()
                 println(">>>> message = $message")
                 val prefix = message.substring(0, 16)
                 withContext(Dispatchers.Main) {
                     when (prefix) {
                         "9527000000010002" -> {
                             enterServerMessageHandle()
+                        }
+
+                        "9527DC7300030001" -> {
+                            val sceneId = message.substring(56, 60).hexToInt()
+                            SceneEvent(sceneId).post()
                             ClientEvent(ClientEvent.ACTION_ENTER_CHANNEL).post()
                         }
 

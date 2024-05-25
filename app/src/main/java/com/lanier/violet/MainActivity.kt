@@ -5,6 +5,7 @@ import com.lanier.violet.databinding.ActivityMainBinding
 import com.lanier.violet.ext.collect
 import com.lanier.violet.ext.launchSafe
 import com.lanier.violet.feature.main.event.ClientEvent
+import com.lanier.violet.feature.main.event.SceneEvent
 
 class MainActivity(
     override val layoutId: Int = R.layout.activity_main
@@ -13,13 +14,24 @@ class MainActivity(
     override fun onBind() {
 
         launchSafe {
-            collect<ClientEvent> {
-                when (it.action) {
-                    ClientEvent.ACTION_CONNECTING -> showLoading()
-                    ClientEvent.ACTION_ENTER_CHANNEL -> {
-                        toast("已进入频道: ${RocoServerClient.channel}")
+            launchSafe {
+                collect<ClientEvent> {
+                    when (it.action) {
+                        ClientEvent.ACTION_CONNECTING -> showLoading()
+                        ClientEvent.ACTION_ENTER_CHANNEL -> {
+                            toast("已进入频道: ${RocoServerClient.channel}")
+                        }
+                        else -> dismissLoading()
                     }
-                    else -> dismissLoading()
+                }
+            }
+            launchSafe {
+                collect<SceneEvent> {
+                    viewbinding.tvChannelAndScene.text = buildString {
+                        append("频道: ${RocoServerClient.channel}")
+                        append("\n")
+                        append("场景ID: ${it.sceneId}")
+                    }
                 }
             }
         }
