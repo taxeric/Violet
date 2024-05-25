@@ -8,5 +8,17 @@ object UserData {
 
     var mainKey = ""
     var farmKey = ""
+
+    @OptIn(ExperimentalStdlibApi::class)
     var QQ = ""
+        set(value) {
+            field = value
+            hexQQ = value.toInt().toHexString()
+        }
+
+    /**
+     * 16进制QQ
+     */
+    var hexQQ = ""
+        private set
 }
