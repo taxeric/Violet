@@ -8,9 +8,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.InputStream
-import java.net.InetAddress
 import java.net.Socket
-import java.net.UnknownHostException
 import kotlin.random.Random
 
 /**
@@ -28,8 +26,25 @@ object TCPClient {
     var isConnected = false
         private set
 
+    /**
+     * 进入的频道
+     */
+    @OptIn(ExperimentalStdlibApi::class)
+    var channel = ""
+        set(value) {
+            field = value
+            channelHex = channel.toInt().toHexString()
+        }
+
+    /**
+     * 频道16进制
+     */
+    private var channelHex = ""
+
+    /**
+     * 连接服务器
+     */
     fun linkServer(
-        server: String,
         onSuccess: () -> Unit,
         onFailed: (Throwable) -> Unit,
     ) {
@@ -47,7 +62,8 @@ object TCPClient {
                 }
             }
             client = null
-            val serverIP = obtainServerIP(server)
+            val calcServer = calcServerIDByChannel(channel.toInt())
+            val serverIP = obtainServerIPAddressById(calcServer)
             println(">>>> obtain server ip = $serverIP")
             client = withContext(Dispatchers.IO) {
                 Socket(serverIP, 443)
@@ -55,7 +71,7 @@ object TCPClient {
             client?.isConnected?.let {
                 if (it) {
                     onSuccess.invoke()
-                    enterServer(server)
+                    enterServer(calcServer)
                     client?.getInputStream()?.run {
                         receiveMsgInternal(this)
                     }
@@ -64,6 +80,10 @@ object TCPClient {
         }
     }
 
+    /**
+     * 发送命令
+     */
+    @OptIn(ExperimentalStdlibApi::class)
     fun sendCommand(message: String, onFailed: ((Throwable) -> Unit)? = null) {
         mainScope.launch(
             CoroutineExceptionHandler { _, throwable ->
@@ -76,8 +96,7 @@ object TCPClient {
             client?.let {
                 withContext(Dispatchers.IO) {
                     println(">>>> send command $message")
-                    val byteMsg = message.toByteArray()
-                    println(">>>> send command byte $byteMsg")
+                    val byteMsg = message.hexToByteArray()
                     it.getOutputStream().write(byteMsg)
                     it.getOutputStream().flush()
                 }
@@ -85,93 +104,93 @@ object TCPClient {
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
-    private fun enterServer(server: String) {
+    /**
+     * 进入服务器
+     *
+     * @param serverId 计算得到的服务器编号
+     */
+    private fun enterServer(serverId: Int) {
         mainScope.launch {
             val sb = buildString {
                 append("7467775F6C375F666F72776172640D0A486F73743A207A6F6E65")
-                append(server)
+                serverId.toString().forEach {
+                    append("3")
+                    append(it)
+                }
                 append("2E3137726F636F2E71712E636F6D3A3434330D0A0D0A")
             }
             withContext(Dispatchers.IO) {
                 sendCommand(sb)
             }
-            withContext(Dispatchers.IO) {
-                val sb4 = buildString {
-                    append("9527000000030001")
-                    append(UserData.QQ)
-                    append("0000000000000042")
-                }
-                val sb3 = buildString {
-                    append(sb4)
-                    val m = "0000${server.toLong().toHexString().uppercase()}"
-                    val n = m.substring(m.length - 4, m.length)
-                    append(n)
-                }
-                val sb2 = buildString {
-                    append(sb3)
-                    append(UserData.mainKey)
-                }
-                sendCommand(sb2)
-            }
         }
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     private suspend fun receiveMsgInternal(`is`: InputStream) {
         withContext(Dispatchers.IO) {
-            val data = `is`.readBytes()
-            withContext(Dispatchers.Main) {
-                processServerData(data)
-            }
-        }
-    }
-
-    private fun processServerData(data: ByteArray) {
-    }
-
-    private suspend fun obtainServerIP(server: String): String {
-        var server_d = server.toDouble() / 50.0 + 2.toByte() + 3.toByte()
-        var server_s = server_d.toString()
-        if (server_s.substring(server_s.length - 2, server_s.length) == ".0") {
-            server_d -= 1.toByte()
-            server_s = server_d.toInt().toString()
-        }
-        return defIP(server_s)
-//        val serverAddress = buildString {
-//            append("zone")
-//            append(server_s)
-//            append(".17roco.qq.com")
-//        }
-//        return try {
-//            val address: InetAddress =
-//                withContext(Dispatchers.IO) {
-//                    InetAddress.getByName(serverAddress)
-//                }
-//            val ipAddress: String? = address.hostAddress
-//            ipAddress ?: defIP(server_s)
-//        } catch (e: UnknownHostException) {
-//            e.printStackTrace()
-//            defIP(server_s)
-//        }
-    }
-
-    private fun defIP(server_s: String): String {
-        return when (server_s.first()) {
-            '2' -> "101.89.0.211"
-            '3' -> "101.226.49.105"
-            '4' -> "61.151.167.201"
-            '5' -> "101.91.21.94"
-            '6' -> "101.91.21.39"
-            '7' -> "101.91.22.91"
-            '8' -> "180.163.210.31"
-            '9' -> "101.227.117.80"
-            else -> {
-                when (Random.nextInt(3)) {
-                    0 -> "101.226.144.45"
-                    1 -> "109.244.212.148"
-                    else -> "140.207.69.63"
+            val buffer = ByteArray(1024)
+            while (`is`.read(buffer) != -1) {
+                val message = buffer.toHexString()
+                println(">>>> message = $message")
+                val prefix = message.substring(0, 16)
+                when (prefix) {
+                    "9527000000010002" -> {
+                        enterServerMessageHandle()
+                    }
+                    else -> {}
                 }
             }
+        }
+    }
+
+    /**
+     * 处理进入服务器消息
+     */
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun enterServerMessageHandle() {
+        val sb3 = buildString {
+            append("9527000000030001")
+            append(UserData.hexQQ.uppercase())
+            append("0000000000000042")
+            append(channelHex.substring(4, channelHex.length).uppercase())
+            append(UserData.mainKey.toByteArray().toHexString())
+        }
+        sendCommand(sb3)
+    }
+
+    /**
+     * 计算服务器编号
+     *
+     * @param channel 想进入的服务器频道, 值为1-300, 与游戏一致
+     *
+     * @return 服务器编号
+     */
+    private fun calcServerIDByChannel(channel: Int) : Int {
+        return when (val mChannel = channel / 50 + 5) {
+            in 5..10 -> mChannel
+            11 -> 1
+            else -> Random.nextInt(5, 10)
+        }
+    }
+
+    /**
+     * 根据服务器编号返回对应ip
+     *
+     * @param serverId 服务器编号
+     */
+    private fun obtainServerIPAddressById(serverId: Int): String {
+        return when (serverId) {
+            1 -> "109.244.212.148"
+//            2 -> "101.89.0.211"
+//            3 -> "101.226.49.105"
+//            4 -> "61.151.167.201"
+            5 -> "101.91.21.94"
+            6 -> "101.91.21.39"
+            7 -> "101.91.22.91"
+            8 -> "180.163.210.31"
+            9 -> "101.227.117.80"
+            10 -> "101.226.144.45"
+            else -> "101.226.144.45"
         }
     }
 }
