@@ -87,6 +87,8 @@ class LoginActivity(
                                         } ?: toast("输入频道~")
                                     } else {
                                         RocoServerClient.channel = channel
+                                        startAct<MainActivity> {  }
+                                        finish()
                                     }
                                 }
                             }
