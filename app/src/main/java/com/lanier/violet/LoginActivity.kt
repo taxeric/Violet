@@ -81,9 +81,13 @@ class LoginActivity(
                                     if (viewbinding.cbRandomChannel.isChecked.not()) {
                                         val inputChannel = viewbinding.tieChannel.text?.toString()
                                         inputChannel?.let {
-                                            RocoServerClient.channel = it
-                                            startAct<MainActivity> {  }
-                                            finish()
+                                            if (it.isNotEmpty()) {
+                                                RocoServerClient.channel = it
+                                                startAct<MainActivity> { }
+                                                finish()
+                                            } else {
+                                                toast("输入频道~")
+                                            }
                                         } ?: toast("输入频道~")
                                     } else {
                                         RocoServerClient.channel = channel
