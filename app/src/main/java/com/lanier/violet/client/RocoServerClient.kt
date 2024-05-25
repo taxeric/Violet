@@ -1,6 +1,8 @@
 package com.lanier.violet.client
 
 import com.lanier.violet.UserData
+import com.lanier.violet.ext.post
+import com.lanier.violet.feature.main.event.ClientEvent
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -66,6 +68,7 @@ object RocoServerClient {
             val calcServer = calcServerIDByChannel(channel.toInt())
             val serverIP = obtainServerIPAddressById(calcServer)
             println(">>>> obtain server ip = $serverIP")
+            ClientEvent(ClientEvent.ACTION_CONNECTING).post()
             client = withContext(Dispatchers.IO) {
                 Socket(serverIP, 443)
             }
@@ -73,11 +76,18 @@ object RocoServerClient {
                 if (it) {
                     onSuccess.invoke()
                     enterServer(calcServer)
+                    ClientEvent(ClientEvent.ACTION_CONNECTED).post()
                     client?.getInputStream()?.run {
                         receiveMsgInternal(this)
                     }
-                } else onFailed.invoke(Throwable("can't connect to server, has not connect to server"))
-            } ?: onFailed.invoke(Throwable("can't connect to server, the connect state is null"))
+                } else {
+                    onFailed.invoke(Throwable("can't connect to server, has not connect to server"))
+                    ClientEvent(ClientEvent.ACTION_DISCONNECTED).post()
+                }
+            } ?: run {
+                onFailed.invoke(Throwable("can't connect to server, the connect state is null"))
+                ClientEvent(ClientEvent.ACTION_DISCONNECTED).post()
+            }
         }
     }
 
@@ -138,6 +148,7 @@ object RocoServerClient {
                     when (prefix) {
                         "9527000000010002" -> {
                             enterServerMessageHandle()
+                            ClientEvent(ClientEvent.ACTION_ENTER_CHANNEL).post()
                         }
 
                         else -> {}

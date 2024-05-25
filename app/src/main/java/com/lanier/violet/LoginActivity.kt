@@ -83,7 +83,10 @@ class LoginActivity(
                                         inputChannel?.let {
                                             RocoServerClient.channel = it
                                             startAct<MainActivity> {  }
+                                            finish()
                                         } ?: toast("输入频道~")
+                                    } else {
+                                        RocoServerClient.channel = channel
                                     }
                                 }
                             }
