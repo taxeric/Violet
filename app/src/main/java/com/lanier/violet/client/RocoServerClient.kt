@@ -4,6 +4,7 @@ import com.lanier.violet.UserData
 import com.lanier.violet.ext.post
 import com.lanier.violet.feature.main.event.ClientEvent
 import com.lanier.violet.feature.main.event.SceneEvent
+import com.lanier.violet.feature.main.event.UserInfoEvent
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,6 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.InputStream
 import java.net.Socket
+import java.nio.charset.Charset
 import kotlin.random.Random
 
 /**
@@ -155,6 +157,33 @@ object RocoServerClient {
                             val sceneId = message.substring(56, 60).hexToInt()
                             SceneEvent(sceneId).post()
                             ClientEvent(ClientEvent.ACTION_ENTER_CHANNEL).post()
+                        }
+
+                        "9527DC7300030015" -> {
+                            val name = buildString {
+                                message
+                                    .substring(60, 88)
+                                    .chunked(4)
+                                    .forEach {
+                                        if (it != "0000") {
+                                            append(
+                                                it.hexToByteArray()
+                                                    .toString(Charset.forName("GBK"))
+                                            )
+                                        }
+                                    }
+                            }
+                            UserInfoEvent(
+                                username = name,
+                                userLevel = message.substring(100, 104).hexToInt(),
+                                userCredit = message.substring(104, 112).hexToInt(),
+                                userTargetCredit = message.substring(112, 120).hexToInt(),
+                                userStamina = message.substring(128, 136).hexToInt(),
+                                userWisdom = message.substring(136, 144).hexToInt(),
+                                userCharm = message.substring(144, 152).hexToInt(),
+                                userCoins = message.substring(152, 160).hexToInt(),
+                                vipDays = message.substring(258, 266).hexToInt(),
+                            ).post()
                         }
 
                         else -> {}
