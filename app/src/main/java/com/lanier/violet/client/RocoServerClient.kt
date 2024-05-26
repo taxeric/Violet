@@ -108,9 +108,10 @@ object RocoServerClient {
             }
         ) {
             client?.let {
+                val tempMessage = message.replace(" ", "")
                 withContext(Dispatchers.IO) {
-                    println(">>>> send command $message")
-                    val byteMsg = message.hexToByteArray()
+                    println(">>>> send command $tempMessage")
+                    val byteMsg = tempMessage.hexToByteArray()
                     it.getOutputStream().write(byteMsg)
                     it.getOutputStream().flush()
                 }
