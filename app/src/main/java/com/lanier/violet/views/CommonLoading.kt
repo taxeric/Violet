@@ -1,4 +1,4 @@
-package com.lanier.violet
+package com.lanier.violet.views
 
 import android.graphics.Color
 import android.os.Bundle

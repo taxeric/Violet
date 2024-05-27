@@ -1,4 +1,4 @@
-package com.lanier.violet
+package com.lanier.violet.data
 
 /**
  * Created by 幻弦让叶

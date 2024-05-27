@@ -1,4 +1,4 @@
-package com.lanier.violet
+package com.lanier.violet.feature.login
 
 import android.content.DialogInterface
 import android.graphics.Color
@@ -12,8 +12,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.toColorInt
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
+import com.lanier.violet.base.BaseAct
+import com.lanier.violet.feature.main.MainActivity
+import com.lanier.violet.R
+import com.lanier.violet.data.UserData
 import com.lanier.violet.client.RocoServerClient
 import com.lanier.violet.databinding.ActivityLoginBinding
+import com.lanier.violet.ext.startAct
+import com.lanier.violet.ext.toast
+import com.lanier.violet.ext.visibleOrGone
 import org.apache.commons.text.StringEscapeUtils
 import kotlin.random.Random
 

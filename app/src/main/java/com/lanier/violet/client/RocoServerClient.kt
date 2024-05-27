@@ -1,6 +1,6 @@
 package com.lanier.violet.client
 
-import com.lanier.violet.UserData
+import com.lanier.violet.data.UserData
 import com.lanier.violet.ext.post
 import com.lanier.violet.feature.main.event.ClientEvent
 import com.lanier.violet.feature.main.event.SceneEvent

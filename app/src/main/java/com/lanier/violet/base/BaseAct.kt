@@ -1,9 +1,10 @@
-package com.lanier.violet
+package com.lanier.violet.base
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.viewbinding.ViewBinding
+import com.lanier.violet.views.CommonLoading
 
 abstract class BaseAct<VB : ViewBinding> : AppCompatActivity() {
 
