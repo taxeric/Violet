@@ -3,4 +3,8 @@
 
     <string name="random_channel">随机频道</string>
     <string name="input_channel">输入频道</string>
+
+    <string name="menu_home">首页</string>
+    <string name="menu_mine">我的</string>
+    <string name="menu_pet_backpack">宠物背包</string>
 </resources>

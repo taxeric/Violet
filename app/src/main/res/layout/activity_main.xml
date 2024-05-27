@@ -7,17 +7,25 @@
 
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        tools:context=".feature.main.MainActivity">
 
-        <TextView
-            android:id="@+id/tvChannelAndScene"
-            android:padding="8dp"
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/navigator"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/navigator"
+            app:menu="@menu/main_menu"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
