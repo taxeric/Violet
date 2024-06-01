@@ -8,6 +8,8 @@
     <string name="menu_mine">我的</string>
     <string name="menu_pet_backpack">宠物背包</string>
 
+    <string name="jump_scene">场景跳转</string>
+
     <string name="__empty">----</string>
 
     <string name="m_id">编号: %s</string>

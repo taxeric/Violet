@@ -61,6 +61,10 @@ class HomeFragment private constructor(
                         append("频道: ${RocoServerClient.channel}")
                         append("\t")
                         append("场景ID: ${it.sceneId}")
+                        if (it.lastSceneId != -1) {
+                            append("\t")
+                            append("上个场景ID: ${it.lastSceneId}")
+                        }
                     }
                 }
             }
@@ -68,6 +72,9 @@ class HomeFragment private constructor(
 
         viewbinding.btnInfo.setOnClickListener {
             requestPersonalInfo()
+        }
+
+        viewbinding.tvJumpScene.setOnClickListener {
         }
     }
 

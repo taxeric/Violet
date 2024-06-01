@@ -6,4 +6,4 @@ package com.lanier.violet.feature.main.event
  *
  * 场景
  */
-data class SceneEvent(val sceneId: Int)
+data class SceneEvent(val sceneId: Int, val lastSceneId: Int = -1)

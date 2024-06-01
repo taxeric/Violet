@@ -9,6 +9,8 @@ object UserData {
     var mainKey = ""
     var farmKey = ""
 
+    var currentSceneId = -1
+
     @OptIn(ExperimentalStdlibApi::class)
     var QQ = ""
         set(value) {

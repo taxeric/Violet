@@ -38,10 +38,27 @@
             android:layout_marginStart="8dp"
             app:layout_constraintBottom_toBottomOf="@+id/topBarView"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tvJumpScene"
             app:layout_constraintStart_toEndOf="@+id/ivAvatar"
             android:layout_width="0dp"
             android:layout_height="0dp"/>
+
+        <TextView
+            android:id="@+id/tvJumpScene"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@color/md_theme_primary"
+            android:background="@drawable/shape_solid_primary_corner_25"
+            android:text="@string/jump_scene"
+            android:gravity="center"
+            android:layout_marginEnd="8dp"
+            android:paddingVertical="4dp"
+            android:paddingHorizontal="12dp"
+            app:layout_constraintBottom_toBottomOf="@+id/topBarView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
         <Button
             android:id="@+id/btnInfo"
