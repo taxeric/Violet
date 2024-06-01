@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:listitem="@layout/item_pet_backpack" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clSkill"
+            android:layout_width="0dp"
+            android:layout_height="160dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/recyclerView"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.lanier.violet.views.SkillView
+                android:id="@+id/skill1"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:layout_constraintBottom_toTopOf="@+id/skill3"
+                app:layout_constraintEnd_toStartOf="@+id/skill2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.lanier.violet.views.SkillView
+                android:id="@+id/skill2"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:layout_constraintBottom_toTopOf="@+id/skill4"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/skill1"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.lanier.violet.views.SkillView
+                android:id="@+id/skill3"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/skill4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/skill1" />
+
+            <com.lanier.violet.views.SkillView
+                android:id="@+id/skill4"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/skill3"
+                app:layout_constraintTop_toBottomOf="@+id/skill2" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tvPetInfoPanel1"
+            tools:text="宠物信息面板1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clSkill"
+            app:layout_constraintStart_toStartOf="@+id/clSkill"
+            app:layout_constraintEnd_toStartOf="@+id/tvPetInfoPanel2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"/>
+
+        <TextView
+            android:id="@+id/tvPetInfoPanel2"
+            tools:text="宠物信息面板2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clSkill"
+            app:layout_constraintStart_toEndOf="@+id/tvPetInfoPanel1"
+            app:layout_constraintEnd_toStartOf="@+id/llAction"
+            android:layout_width="0dp"
+            android:layout_height="0dp"/>
+
+        <LinearLayout
+            android:id="@+id/llAction"
+            android:layout_width="160dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clSkill">
+
+            <Button
+                android:id="@+id/btnSetFirst"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/set_first" />
+
+            <Button
+                android:id="@+id/btnReplaceSkill"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/replace_skill" />
+
+            <Button
+                android:id="@+id/btnPutIntoStorage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/put_into_storage" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/topBarView"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@color/md_theme_primary"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"/>
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivAvatar"
+            tools:src="#FFF"
+            app:shapeAppearance="@style/ShapeImageViewCorner"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/topBarView"
+            app:layout_constraintBottom_toBottomOf="@+id/topBarView"
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
+
+        <TextView
+            android:id="@+id/tvChannelAndScene"
+            tools:text="ID: 13"
+            android:textStyle="bold"
+            android:gravity="center_vertical"
+            android:textColor="@color/white"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/topBarView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ivAvatar"
+            android:layout_width="0dp"
+            android:layout_height="0dp"/>
+
+        <Button
+            android:id="@+id/btnInfo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topBarView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

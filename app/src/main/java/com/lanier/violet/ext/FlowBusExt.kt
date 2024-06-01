@@ -34,6 +34,14 @@ suspend inline fun <reified T> collect(
     }
 }
 
+suspend inline fun <reified T> collectSuspendAction(
+    crossinline action: suspend (T) -> Unit
+) {
+    FlowBus.collect<T>(T::class.java.name) {
+        action.invoke(it)
+    }
+}
+
 suspend inline fun <reified T> collect(
     key: String,
     crossinline action: (T) -> Unit

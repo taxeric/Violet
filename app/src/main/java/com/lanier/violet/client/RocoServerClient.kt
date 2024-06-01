@@ -1,8 +1,11 @@
 package com.lanier.violet.client
 
+import com.lanier.violet.client.processor.PetBackpackProcessor
+import com.lanier.violet.data.PetBackpackData
 import com.lanier.violet.data.UserData
 import com.lanier.violet.ext.post
 import com.lanier.violet.feature.main.event.ClientEvent
+import com.lanier.violet.feature.main.event.PetBackpackHandleEvent
 import com.lanier.violet.feature.main.event.SceneEvent
 import com.lanier.violet.feature.main.event.UserInfoEvent
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -57,6 +60,7 @@ object RocoServerClient {
         mainScope.launch(
             context = CoroutineExceptionHandler { _, throwable ->
                 onFailed.invoke(throwable)
+                isConnected = false
             }
         ) {
             client?.run {
@@ -77,6 +81,7 @@ object RocoServerClient {
             }
             client?.isConnected?.let {
                 if (it) {
+                    isConnected = true
                     onSuccess.invoke()
                     enterServer(calcServer)
                     ClientEvent(ClientEvent.ACTION_CONNECTED).post()
@@ -149,45 +154,52 @@ object RocoServerClient {
                 println(">>>> message = $message")
                 val prefix = message.substring(0, 16)
                 withContext(Dispatchers.Main) {
-                    when (prefix) {
-                        "9527000000010002" -> {
-                            enterServerMessageHandle()
-                        }
-
-                        "9527DC7300030001" -> {
-                            val sceneId = message.substring(56, 60).hexToInt()
-                            SceneEvent(sceneId).post()
-                            ClientEvent(ClientEvent.ACTION_ENTER_CHANNEL).post()
-                        }
-
-                        "9527DC7300030015" -> {
-                            val name = buildString {
-                                message
-                                    .substring(60, 88)
-                                    .chunked(4)
-                                    .forEach {
-                                        if (it != "0000") {
-                                            append(
-                                                it.hexToByteArray()
-                                                    .toString(Charset.forName("GBK"))
-                                            )
-                                        }
-                                    }
+                    val suffix = prefix.substring(8, prefix.length)
+                    if (suffix == "00030001") {
+                        val sceneId = message.substring(56, 60).hexToInt()
+                        SceneEvent(sceneId).post()
+                        ClientEvent(ClientEvent.ACTION_ENTER_CHANNEL).post()
+                    } else {
+                        when (prefix) {
+                            ByteDataConstant.ENTER_SERVER -> {
+                                enterServerMessageHandle()
                             }
-                            UserInfoEvent(
-                                username = name,
-                                userLevel = message.substring(100, 104).hexToInt(),
-                                userCredit = message.substring(104, 112).hexToInt(),
-                                userTargetCredit = message.substring(112, 120).hexToInt(),
-                                userStamina = message.substring(128, 136).hexToInt(),
-                                userWisdom = message.substring(136, 144).hexToInt(),
-                                userCharm = message.substring(144, 152).hexToInt(),
-                                userCoins = message.substring(152, 160).hexToInt(),
-                                vipDays = message.substring(258, 266).hexToInt(),
-                            ).post()
-                        }
 
-                        else -> {}
+                            ByteDataConstant.PERSONAL_INFO -> {
+                                val name = buildString {
+                                    message
+                                        .substring(60, 88)
+                                        .chunked(4)
+                                        .forEach {
+                                            if (it != "0000") {
+                                                append(
+                                                    it.hexToByteArray()
+                                                        .toString(Charset.forName("GBK"))
+                                                )
+                                            }
+                                        }
+                                }
+                                UserInfoEvent(
+                                    username = name,
+                                    userLevel = message.substring(100, 104).hexToInt(),
+                                    userCredit = message.substring(104, 112).hexToInt(),
+                                    userTargetCredit = message.substring(112, 120).hexToInt(),
+                                    userStamina = message.substring(128, 136).hexToInt(),
+                                    userWisdom = message.substring(136, 144).hexToInt(),
+                                    userCharm = message.substring(144, 152).hexToInt(),
+                                    userCoins = message.substring(152, 160).hexToInt(),
+                                    vipDays = message.substring(258, 266).hexToInt(),
+                                ).post()
+                            }
+
+                            ByteDataConstant.PET_BACKPACK -> {
+                                val data = PetBackpackProcessor(message).process()
+                                PetBackpackData.reset(data)
+                                PetBackpackHandleEvent(true).post()
+                            }
+
+                            else -> {}
+                        }
                     }
                 }
             }
@@ -206,7 +218,7 @@ object RocoServerClient {
             append(channelHex.substring(4, channelHex.length).uppercase())
             append(UserData.mainKey.toByteArray().toHexString())
         }
-        sendCommand(sb3)
+        sendCommand(sb3) // 发送连接频道消息
     }
 
     /**

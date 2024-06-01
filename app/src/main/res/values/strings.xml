@@ -7,4 +7,26 @@
     <string name="menu_home">首页</string>
     <string name="menu_mine">我的</string>
     <string name="menu_pet_backpack">宠物背包</string>
+
+    <string name="__empty">----</string>
+
+    <string name="m_id">编号: %s</string>
+    <string name="m_skill_pp">PP: %s</string>
+    <string name="acquisition_time">获得时间: %s</string>
+    <string name="m_lv">Lv. %s</string>
+    <string name="m_sex">性别: %s</string>
+    <string name="m_character_s">性格: %s</string>
+    <string name="m_hp_max_hp">精力: %s / %s</string>
+    <string name="m_attack">攻击: %s</string>
+    <string name="m_defence">防御: %s</string>
+    <string name="m_magic_attack">魔攻: %s</string>
+    <string name="m_magic_defence">魔抗: %s</string>
+    <string name="m_speed">速度: %s</string>
+
+    <string name="m_gift">天赋: %s</string>
+    <string name="m_effort">努力: %s</string>
+
+    <string name="set_first">设为首位</string>
+    <string name="replace_skill">技能替换</string>
+    <string name="put_into_storage">放入仓库</string>
 </resources>

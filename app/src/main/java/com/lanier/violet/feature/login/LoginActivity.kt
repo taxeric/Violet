@@ -133,7 +133,7 @@ class LoginActivity(
                 setCookie("Version", "1.0")
                 setCookie("Cookie", mCookie)
                 flush()
-                println(">>>> 设置cookie $mCookie")
+                println(">>>> set cookies $mCookie")
             }
         }
     }

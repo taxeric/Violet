@@ -15,6 +15,7 @@
         android:theme="@style/Theme.Violet"
         tools:targetApi="31">
         <activity
+            android:screenOrientation="userLandscape"
             android:name=".feature.main.MainActivity"
             android:exported="false" />
         <activity
