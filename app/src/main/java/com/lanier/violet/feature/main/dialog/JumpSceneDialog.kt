@@ -7,6 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
+import com.lanier.violet.R
+import com.lanier.violet.client.RocoServerClient
+import com.lanier.violet.data.UserData
 import com.lanier.violet.databinding.DialogJumpSceneBinding
 
 /**
@@ -37,6 +40,7 @@ class JumpSceneDialog private constructor() : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewbinding.tvCurrentScene.text = getString(R.string.current_scene_id, "${UserData.currentSceneId}")
         viewbinding.rbSceneIdFirst.setOnCheckedChangeListener { _, isChecked ->
             sceneIdFirstMode = isChecked
             if (isChecked) {
@@ -51,12 +55,25 @@ class JumpSceneDialog private constructor() : DialogFragment() {
         }
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     private fun gotoScene() {
         val inputSceneContent = viewbinding.etScene.text.toString()
         if (inputSceneContent.isNullOrEmpty()) return
         if (sceneIdFirstMode) {
             try {
-                val sceneId = inputSceneContent.toInt()
+                val sceneId = inputSceneContent.toInt().toHexString()
+                val currentSceneId = UserData.currentSceneId.toHexString()
+                var last = "0"
+                val message = buildString {
+                    append("95 27 00 00 00 03 00 04")
+                    append(UserData.hexQQ)
+                    append("00 00 00 00 00 00 00 0A")
+                    append(currentSceneId.substring(4, currentSceneId.length))
+                    append(sceneId.substring(4, sceneId.length))
+                    append("00 00 00 00 00 0")
+                    append(last)
+                }
+                RocoServerClient.sendCommand(message)
             } catch (e: Throwable) {
                 return
             }
