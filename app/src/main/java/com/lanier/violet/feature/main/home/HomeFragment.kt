@@ -8,6 +8,7 @@ import com.lanier.violet.data.UserData
 import com.lanier.violet.databinding.FragmentHomeBinding
 import com.lanier.violet.ext.collect
 import com.lanier.violet.ext.launchSafe
+import com.lanier.violet.feature.main.dialog.FarmDialog
 import com.lanier.violet.feature.main.dialog.JumpSceneDialog
 import com.lanier.violet.feature.main.event.ClientEvent
 import com.lanier.violet.feature.main.event.SceneEvent
@@ -76,6 +77,10 @@ class HomeFragment private constructor(
 
         viewbinding.tvJumpScene.setOnClickListener {
             activity?.let { JumpSceneDialog.show(it) }
+        }
+
+        viewbinding.tvFarm.setOnClickListener {
+            activity?.let { FarmDialog.show(it) }
         }
     }
 

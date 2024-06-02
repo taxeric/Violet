@@ -5,6 +5,7 @@ import com.lanier.violet.data.PetBackpackData
 import com.lanier.violet.data.UserData
 import com.lanier.violet.ext.post
 import com.lanier.violet.feature.main.event.ClientEvent
+import com.lanier.violet.feature.main.event.FarmEvent
 import com.lanier.violet.feature.main.event.PetBackpackHandleEvent
 import com.lanier.violet.feature.main.event.SceneEvent
 import com.lanier.violet.feature.main.event.UserInfoEvent
@@ -167,6 +168,15 @@ object RocoServerClient {
                             val newSceneId = message.substring(52, 56).hexToInt()
                             SceneEvent(newSceneId, UserData.currentSceneId).post()
                             UserData.currentSceneId = newSceneId
+                        }
+
+                        "00120005" -> {
+                            FarmEvent(FarmEvent.HARVEST, UserData.farmLandHandleIndex).post()
+                            if (UserData.farmLandHandleIndex == UserData.LAND_MAX_INDEX) {
+                                UserData.farmLandHandleIndex = 0
+                            } else {
+                                UserData.farmLandHandleIndex++
+                            }
                         }
                     }
                     when (prefix) {

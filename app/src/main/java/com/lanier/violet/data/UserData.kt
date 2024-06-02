@@ -6,8 +6,18 @@ package com.lanier.violet.data
  */
 object UserData {
 
+    const val LAND_MAX_INDEX = 15
+
     var mainKey = ""
+        set(value) {
+            field = value
+            println(">>>> set main key : $value")
+        }
     var farmKey = ""
+        set(value) {
+            field = value
+            println(">>>> set farm key : $value")
+        }
 
     var currentSceneId = -1
 
@@ -17,6 +27,9 @@ object UserData {
             field = value
             hexQQ = value.toInt().toHexString()
         }
+
+    var farmLandHandleIndex = 0
+
 
     /**
      * 16进制QQ

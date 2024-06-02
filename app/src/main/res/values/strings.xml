@@ -8,6 +8,9 @@
     <string name="menu_mine">我的</string>
     <string name="menu_pet_backpack">宠物背包</string>
 
+    <string name="__idle">就绪</string>
+    <string name="__empty">----</string>
+
     <string name="jump_scene">场景跳转</string>
     <string name="current_scene_id">当前场景: %s</string>
     <string name="jump_to_scene">跳转至</string>
@@ -17,7 +20,12 @@
     <string name="input_scene_name">请输入名称</string>
     <string name="go_scene">GO</string>
 
-    <string name="__empty">----</string>
+    <string name="farm_action">我的农场</string>
+    <string name="farm_land">土地: %s</string>
+    <string name="farm_operating">正在操作土地: %s</string>
+    <string name="farm_operation_result">操作完成, 成功 %s 块, 失败 %s 块, 类型 %s</string>
+    <string name="farm_plant">种植</string>
+    <string name="farm_harvest">收获</string>
 
     <string name="m_id">编号: %s</string>
     <string name="m_skill_pp">PP: %s</string>
