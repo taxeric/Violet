@@ -77,9 +77,9 @@ class PetBackpackFragment private constructor(
         viewbinding.tvPetInfoPanel2.text = buildPetInfo2(petData)
         val skillCount = petData.skills.size
         viewbinding.skill1.bind(if (skillCount > 0) petData.skills[0] else null)
-        viewbinding.skill1.bind(if (skillCount > 1) petData.skills[1] else null)
-        viewbinding.skill1.bind(if (skillCount > 2) petData.skills[2] else null)
-        viewbinding.skill1.bind(if (skillCount > 3) petData.skills[3] else null)
+        viewbinding.skill2.bind(if (skillCount > 1) petData.skills[1] else null)
+        viewbinding.skill3.bind(if (skillCount > 2) petData.skills[2] else null)
+        viewbinding.skill4.bind(if (skillCount > 3) petData.skills[3] else null)
     }
 
     private fun buildPetInfo1(petData: PetData) : String {
