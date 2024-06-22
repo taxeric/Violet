@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.ksp.plugin)
 }
 
 android {
@@ -56,4 +57,10 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.commons.text)
     implementation(libs.coil)
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.room.compiler)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.paging)
+
 }
