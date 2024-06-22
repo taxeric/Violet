@@ -1,7 +1,6 @@
 package com.lanier.violet.feature.main.pet_backpack
 
 import android.os.Bundle
-import androidx.recyclerview.widget.RecyclerView
 import com.lanier.violet.R
 import com.lanier.violet.base.BaseFra
 import com.lanier.violet.client.RocoServerClient
@@ -42,7 +41,7 @@ class PetBackpackFragment private constructor(
                     (adapter.getItem(position) as? PetData)?.let {
                         (adapter as PetBackpackAdapter).run {
                             modifySelectedIndex(position)
-                            modifyProfile(currentSelectedPet)
+                            refreshProfile(currentSelectedPet)
                         }
                     }
                 }
@@ -57,6 +56,7 @@ class PetBackpackFragment private constructor(
                     mAdapter.data = PetBackpackData.petData()
                     if (!PetBackpackData.isEmpty()) {
                         mAdapter.modifySelectedIndex(0)
+                        refreshProfile(mAdapter.data[0])
                     }
                 }
             }
@@ -71,7 +71,7 @@ class PetBackpackFragment private constructor(
         RocoServerClient.sendCommand(command)
     }
 
-    private fun modifyProfile(petData: PetData?) {
+    private fun refreshProfile(petData: PetData?) {
         petData?: return
         viewbinding.tvPetInfoPanel1.text = buildPetInfo1(petData)
         viewbinding.tvPetInfoPanel2.text = buildPetInfo2(petData)
