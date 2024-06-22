@@ -1,4 +1,4 @@
-package com.lanier.violet.database
+package com.lanier.violet.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -30,7 +30,7 @@ data class Spirit(
 
     @ColumnInfo(name = "endTime") val endTime: String,
     @ColumnInfo(name = "expType") val expType: String,
-    @ColumnInfo(name = "features") val features: String,
+    @ColumnInfo(name = "property") val property: String,
     @ColumnInfo(name = "habitat") val habitat: String,
     @ColumnInfo(name = "is_in_book") val isInBook: String,
     @ColumnInfo(name = "m_type") val mType: String,

@@ -1,4 +1,4 @@
-package com.lanier.violet.database
+package com.lanier.violet.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
