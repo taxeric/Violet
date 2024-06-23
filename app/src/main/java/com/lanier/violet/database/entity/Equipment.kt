@@ -3,8 +3,9 @@ package com.lanier.violet.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.lanier.violet.database.Constant
 
-@Entity(tableName = "equipment")
+@Entity(tableName = Constant.TN_EQUIPMENT)
 data class Equipment(
     @PrimaryKey val id: String,
     @ColumnInfo val level: String,

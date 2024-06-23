@@ -3,8 +3,9 @@ package com.lanier.violet.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.lanier.violet.database.Constant
 
-@Entity(tableName = "seed")
+@Entity(tableName = Constant.TN_SEED)
 data class Seed(
     @PrimaryKey val id: String,
     @ColumnInfo(name = "harvest_id") val harvestId: String,

@@ -15,3 +15,14 @@ fun Long.toFormattedString(
     val date = Date(this)
     return sdf.format(date)
 }
+
+fun calcRunTime(
+    methodName: String = "",
+    block: () -> Unit,
+) {
+    println(">>>> $methodName start")
+    val start = System.currentTimeMillis()
+    block.invoke()
+    val end = System.currentTimeMillis()
+    println(">>>> $methodName end, run time : ${end - start}")
+}

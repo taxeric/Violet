@@ -46,4 +46,11 @@
     <string name="set_first">设为首位</string>
     <string name="replace_skill">技能替换</string>
     <string name="put_into_storage">放入仓库</string>
+
+    <string name="db_sync_spirit">同步精灵数据库</string>
+    <string name="db_sync_skill">同步技能数据库</string>
+    <string name="db_sync_prop">同步道具数据库</string>
+    <string name="db_sync_scene">同步场景数据库</string>
+    <string name="db_sync_game">同步游戏数据库</string>
+    <string name="db_sync_last_time">上次同步时间</string>
 </resources>

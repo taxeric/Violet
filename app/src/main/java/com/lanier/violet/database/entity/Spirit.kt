@@ -3,8 +3,9 @@ package com.lanier.violet.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.lanier.violet.database.Constant
 
-@Entity(tableName = "spirit")
+@Entity(tableName = Constant.TN_SPIRIT)
 data class Spirit(
     @PrimaryKey val id: String,
     @ColumnInfo(name = "name") val name: String,
