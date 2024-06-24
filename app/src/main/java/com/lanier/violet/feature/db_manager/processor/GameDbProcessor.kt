@@ -1,11 +1,14 @@
 package com.lanier.violet.feature.db_manager.processor
 
 import com.lanier.violet.database.Constant
+import com.lanier.violet.database.dao.GameDao
+import com.lanier.violet.database.entity.Game
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class GameDbProcessor(
-    filepath: String
+    filepath: String,
+    private val dao: GameDao
 ) : AbsCombineProcessor(filepath) {
 
     companion object {
@@ -22,7 +25,23 @@ class GameDbProcessor(
         onCompleted: (() -> Unit)?,
     ) {
         withContext(Dispatchers.IO) {
-            readFromOrigin(Constant.TN_GAME, GAMES)
+            val result = readFromOrigin(Constant.TN_GAME, GAMES)
+            val games = parseGames(result.second)
+            dao.upsertAll(games)
+        }
+    }
+
+    private fun parseGames(text: String) : List<Game> {
+        val gameTexts = text.split("<Item ").drop(1).map { "<Item $it" }
+        return gameTexts.map {
+            val attributes = parseAttributes(it, "Item")
+            Game(
+                id = attributes["id"] ?: "",
+                name = attributes["name"] ?: "",
+                type = attributes["type"] ?: "",
+                tips = attributes["tips"] ?: "",
+                sceneId = attributes["sceneId"] ?: ""
+            )
         }
     }
 }
