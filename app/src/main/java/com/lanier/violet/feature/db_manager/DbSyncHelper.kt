@@ -1,8 +1,10 @@
 package com.lanier.violet.feature.db_manager
 
+import com.lanier.violet.database.dao.SkillDao
 import com.lanier.violet.database.dao.SpiritDao
 import com.lanier.violet.ext.launchSafe
 import com.lanier.violet.feature.db_manager.processor.AbsCombineProcessor
+import com.lanier.violet.feature.db_manager.processor.SkillDbProcessor
 import com.lanier.violet.feature.db_manager.processor.SpiritDbProcessor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +23,13 @@ object DbSyncHelper {
             }
         ) {
             val processor: AbsCombineProcessor = SpiritDbProcessor(cachePath, dao)
+            processor.sync()
+        }
+    }
+
+    fun syncSkill(scope: CoroutineScope = mainScope, dao: SkillDao) {
+        scope.launchSafe {
+            val processor : AbsCombineProcessor = SkillDbProcessor(cachePath, dao)
             processor.sync()
         }
     }
