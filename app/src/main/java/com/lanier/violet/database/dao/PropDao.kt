@@ -14,7 +14,7 @@ interface PropDao {
     fun upsertAllProps(prop: List<Prop>) : List<Long>
 
     @Insert(entity = Seed::class, onConflict = OnConflictStrategy.REPLACE)
-    fun upsertAllSeeds(seeds: List<Seed>) : List<Seed>
+    fun upsertAllSeeds(seeds: List<Seed>) : List<Long>
 
     @Query("select * from prop where id=:id")
     fun getPropById(id: String) : Prop

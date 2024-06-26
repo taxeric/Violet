@@ -3,6 +3,7 @@ package com.lanier.violet.feature.db_manager.processor
 import com.lanier.violet.database.Constant
 import com.lanier.violet.database.dao.GameDao
 import com.lanier.violet.database.entity.Game
+import com.lanier.violet.ext.calcRunTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -25,9 +26,11 @@ class GameDbProcessor(
         onCompleted: (() -> Unit)?,
     ) {
         withContext(Dispatchers.IO) {
-            val result = readFromOrigin(Constant.TN_GAME, GAMES)
-            val games = parseGames(result.second)
-            dao.upsertAll(games)
+            calcRunTime {
+                val result = readFromOrigin(Constant.TN_GAME, GAMES)
+                val games = parseGames(result.second)
+                dao.upsertAll(games)
+            }
         }
     }
 

@@ -3,6 +3,7 @@ package com.lanier.violet.feature.db_manager.processor
 import com.lanier.violet.database.Constant
 import com.lanier.violet.database.dao.SceneDao
 import com.lanier.violet.database.entity.Scene
+import com.lanier.violet.ext.calcRunTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -25,9 +26,11 @@ class SceneDbProcessor(
         onCompleted: (() -> Unit)?,
     ) {
         withContext(Dispatchers.IO) {
-            val result = readFromOrigin(Constant.TN_SCENE, SCENE)
-            val scenes = parseScenes(result.second)
-            dao.upsertAll(scenes)
+            calcRunTime {
+                val result = readFromOrigin(Constant.TN_SCENE, SCENE)
+                val scenes = parseScenes(result.second)
+                dao.upsertAll(scenes)
+            }
         }
     }
 

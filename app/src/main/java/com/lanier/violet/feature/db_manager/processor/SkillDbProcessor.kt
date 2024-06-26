@@ -19,7 +19,7 @@ class SkillDbProcessor(
 
         private const val SKILL = "skills.txt"
         private const val SKILL_EFFECT = "skill_effects.txt"
-        private const val SKILL_EFFECT_DESC = "effects_desc.txt"
+        private const val SKILL_EFFECT_DESC = "effect_desc.txt"
     }
 
     override val path: String
