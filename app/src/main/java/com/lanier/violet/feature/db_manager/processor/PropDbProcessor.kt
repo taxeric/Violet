@@ -2,6 +2,7 @@ package com.lanier.violet.feature.db_manager.processor
 
 import com.lanier.violet.database.Constant
 import com.lanier.violet.database.dao.PropDao
+import com.lanier.violet.database.entity.Prop
 import com.lanier.violet.database.entity.Seed
 import com.lanier.violet.ext.calcRunTime
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +32,8 @@ class PropDbProcessor(
             launch {
                 calcRunTime {
                     val result = readFromOrigin(Constant.TN_PROP, PROPS)
+                    val props = parsePotionData(result.second)
+                    dao.upsertAllProps(props)
                 }
             }
             launch {
@@ -41,6 +44,22 @@ class PropDbProcessor(
                 }
             }
         }
+    }
+
+    private fun parsePotionData(data: String): List<Prop> {
+        val pattern = Regex(
+            """<ID>(\d+)</ID>\s*<Name>([^<]+)</Name>\s*<Price>(\d+)</Price>\s*<Desc><!\[CDATA\[([^]]+)]\]></Desc>\s*<Unique>(\d+)</Unique>\s*<ExpireTime>(\d+)</ExpireTime>"""
+        )
+        val matches = pattern.findAll(data)
+        return matches.map { match ->
+            val (id, name, price, desc, unique, expireTime) = match.destructured
+            Prop(
+                id = id,
+                name = name,
+                price = price,
+                desc = desc
+            )
+        }.toList()
     }
 
     private fun parseSeeds(text: String) : List<Seed> {
