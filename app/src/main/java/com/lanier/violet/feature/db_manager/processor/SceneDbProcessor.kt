@@ -26,7 +26,7 @@ class SceneDbProcessor(
         onCompleted: (() -> Unit)?,
     ) {
         withContext(Dispatchers.IO) {
-            calcRunTime {
+            calcRunTime("scene") {
                 val result = readFromOrigin(Constant.TN_SCENE, SCENE)
                 val scenes = parseScenes(result.second)
                 dao.upsertAll(scenes)

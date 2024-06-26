@@ -30,14 +30,14 @@ class PropDbProcessor(
     ) {
         withContext(Dispatchers.IO) {
             launch {
-                calcRunTime {
+                calcRunTime("prop") {
                     val result = readFromOrigin(Constant.TN_PROP, PROPS)
                     val props = parsePotionData(result.second)
                     dao.upsertAllProps(props)
                 }
             }
             launch {
-                calcRunTime {
+                calcRunTime("seed") {
                     val result = readFromOrigin(Constant.TN_SEED, SEED)
                     val seeds = parseSeeds(result.second)
                     dao.upsertAllSeeds(seeds)

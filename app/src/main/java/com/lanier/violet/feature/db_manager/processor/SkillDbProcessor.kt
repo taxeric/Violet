@@ -32,21 +32,21 @@ class SkillDbProcessor(
     ) {
         withContext(Dispatchers.IO) {
             launch {
-                calcRunTime {
+                calcRunTime("skill") {
                     val result = readFromOrigin(Constant.TN_SKILL, SKILL)
                     val skills = parseSkills(result.second)
                     dao.upsertSkillAll(skills)
                 }
             }
             launch {
-                calcRunTime {
+                calcRunTime("skill_effect") {
                     val result = readFromOrigin(Constant.TN_SKILL_EFFECT, SKILL_EFFECT)
                     val skillEffects = parseSkillEffects(result.second)
                     dao.upsertSkillEffectsAll(skillEffects)
                 }
             }
             launch {
-                calcRunTime {
+                calcRunTime("effect_desc") {
                     val result = readFromOrigin(Constant.TN_EFFECT_DETAILS, SKILL_EFFECT_DESC)
                     val effectDetails = parseEffectDetails(result.second)
                     dao.upsertEffectDetailsAll(effectDetails)

@@ -26,7 +26,7 @@ class GameDbProcessor(
         onCompleted: (() -> Unit)?,
     ) {
         withContext(Dispatchers.IO) {
-            calcRunTime {
+            calcRunTime("game") {
                 val result = readFromOrigin(Constant.TN_GAME, GAMES)
                 val games = parseGames(result.second)
                 dao.upsertAll(games)
