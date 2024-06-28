@@ -27,10 +27,10 @@ class SkillDbProcessor(
 
     override suspend fun sync(
         onStart: (() -> Unit)?,
-        onError: ((Throwable) -> Unit)?,
         onCompleted: (() -> Unit)?,
     ) {
         withContext(Dispatchers.IO) {
+            onStart?.invoke()
             launch {
                 calcRunTime("skill") {
                     val result = readFromOrigin(Constant.TN_SKILL, SKILL)
@@ -52,6 +52,7 @@ class SkillDbProcessor(
                     dao.upsertEffectDetailsAll(effectDetails)
                 }
             }
+            onCompleted?.invoke()
         }
     }
 

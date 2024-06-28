@@ -22,15 +22,16 @@ class SceneDbProcessor(
 
     override suspend fun sync(
         onStart: (() -> Unit)?,
-        onError: ((Throwable) -> Unit)?,
         onCompleted: (() -> Unit)?,
     ) {
         withContext(Dispatchers.IO) {
+            onStart?.invoke()
             calcRunTime("scene") {
                 val result = readFromOrigin(Constant.TN_SCENE, SCENE)
                 val scenes = parseScenes(result.second)
                 dao.upsertAll(scenes)
             }
+            onCompleted?.invoke()
         }
     }
 

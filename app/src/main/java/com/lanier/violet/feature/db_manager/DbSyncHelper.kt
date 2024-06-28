@@ -22,42 +22,104 @@ object DbSyncHelper {
 
     var cachePath = ""
 
-    fun syncSpirit(scope: CoroutineScope = mainScope, dao: SpiritDao) {
+    fun syncSpirit(
+        scope: CoroutineScope = mainScope,
+        dao: SpiritDao,
+        onStart: (() -> Unit)? = null,
+        onError: ((Throwable) -> Unit)? = null,
+        onSuccess: (() -> Unit)? = null,
+    ) {
         scope.launchSafe(
             error = {
                 println(">>>> error ${it.message}")
+                onError?.invoke(it)
             }
         ) {
             val processor: AbsCombineProcessor = SpiritDbProcessor(cachePath, dao)
-            processor.sync()
+            processor.sync(
+                onStart = onStart,
+                onCompleted = onSuccess,
+            )
         }
     }
 
-    fun syncSkill(scope: CoroutineScope = mainScope, dao: SkillDao) {
-        scope.launchSafe {
+    fun syncSkill(
+        scope: CoroutineScope = mainScope,
+        dao: SkillDao,
+        onStart: (() -> Unit)? = null,
+        onError: ((Throwable) -> Unit)? = null,
+        onSuccess: (() -> Unit)? = null,
+    ) {
+        scope.launchSafe(
+            error = {
+                onError?.invoke(it)
+            }
+        ) {
             val processor : AbsCombineProcessor = SkillDbProcessor(cachePath, dao)
-            processor.sync()
+            processor.sync(
+                onStart = onStart,
+                onCompleted = onSuccess,
+            )
         }
     }
 
-    fun syncScene(scope: CoroutineScope = mainScope, dao: SceneDao) {
-        scope.launchSafe {
+    fun syncScene(
+        scope: CoroutineScope = mainScope,
+        dao: SceneDao,
+        onStart: (() -> Unit)? = null,
+        onError: ((Throwable) -> Unit)? = null,
+        onSuccess: (() -> Unit)? = null,
+    ) {
+        scope.launchSafe(
+            error = {
+                onError?.invoke(it)
+            }
+        ) {
             val processor : AbsCombineProcessor = SceneDbProcessor(cachePath, dao)
-            processor.sync()
+            processor.sync(
+                onStart = onStart,
+                onCompleted = onSuccess,
+            )
         }
     }
 
-    fun syncGame(scope: CoroutineScope = mainScope, dao: GameDao) {
-        scope.launchSafe {
+    fun syncGame(
+        scope: CoroutineScope = mainScope,
+        dao: GameDao,
+        onStart: (() -> Unit)? = null,
+        onError: ((Throwable) -> Unit)? = null,
+        onSuccess: (() -> Unit)? = null,
+    ) {
+        scope.launchSafe(
+            error = {
+                onError?.invoke(it)
+            }
+        ) {
             val processor : AbsCombineProcessor = GameDbProcessor(cachePath, dao)
-            processor.sync()
+            processor.sync(
+                onStart = onStart,
+                onCompleted = onSuccess,
+            )
         }
     }
 
-    fun syncProps(scope: CoroutineScope = mainScope, dao: PropDao) {
-        scope.launchSafe {
+    fun syncProps(
+        scope: CoroutineScope = mainScope,
+        dao: PropDao,
+        onStart: (() -> Unit)? = null,
+        onError: ((Throwable) -> Unit)? = null,
+        onSuccess: (() -> Unit)? = null,
+    ) {
+        scope.launchSafe(
+            error = {
+                onError?.invoke(it)
+            }
+        ) {
             val processor : AbsCombineProcessor = PropDbProcessor(cachePath, dao)
-            processor.sync()
+            processor.sync(
+                onStart = onStart,
+                onCompleted = onSuccess,
+            )
         }
     }
 }

@@ -69,7 +69,6 @@ abstract class AbsCombineProcessor(
 
     abstract suspend fun sync(
         onStart: (() -> Unit)? = null,
-        onError: ((Throwable) -> Unit)? = null,
         onCompleted: (() -> Unit)? = null,
     )
 }

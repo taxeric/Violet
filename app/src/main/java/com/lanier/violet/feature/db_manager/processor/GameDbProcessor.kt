@@ -22,15 +22,16 @@ class GameDbProcessor(
 
     override suspend fun sync(
         onStart: (() -> Unit)?,
-        onError: ((Throwable) -> Unit)?,
         onCompleted: (() -> Unit)?,
     ) {
         withContext(Dispatchers.IO) {
+            onStart?.invoke()
             calcRunTime("game") {
                 val result = readFromOrigin(Constant.TN_GAME, GAMES)
                 val games = parseGames(result.second)
                 dao.upsertAll(games)
             }
+            onCompleted?.invoke()
         }
     }
 

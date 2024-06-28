@@ -33,10 +33,10 @@ class SpiritDbProcessor(
 
     override suspend fun sync(
         onStart: (() -> Unit)?,
-        onError: ((Throwable) -> Unit)?,
         onCompleted: (() -> Unit)?,
     ) {
         withContext(Dispatchers.IO) {
+            onStart?.invoke()
             launch {
                 calcRunTime("spirit") {
                     val result = readFromOrigin(Constant.TN_SPIRIT, SPIRITS)
@@ -79,6 +79,7 @@ class SpiritDbProcessor(
                     dao.upsertAllTalents(talents)
                 }
             }
+            onCompleted?.invoke()
         }
     }
 

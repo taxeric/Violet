@@ -25,10 +25,10 @@ class PropDbProcessor(
 
     override suspend fun sync(
         onStart: (() -> Unit)?,
-        onError: ((Throwable) -> Unit)?,
         onCompleted: (() -> Unit)?,
     ) {
         withContext(Dispatchers.IO) {
+            onStart?.invoke()
             launch {
                 calcRunTime("prop") {
                     val result = readFromOrigin(Constant.TN_PROP, PROPS)
@@ -43,6 +43,7 @@ class PropDbProcessor(
                     dao.upsertAllSeeds(seeds)
                 }
             }
+            onCompleted?.invoke()
         }
     }
 
