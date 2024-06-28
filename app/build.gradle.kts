@@ -62,5 +62,6 @@ dependencies {
     ksp(libs.androidx.room.room.compiler)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.paging)
+    implementation(libs.mmkv)
 
 }
