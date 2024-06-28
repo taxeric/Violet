@@ -6,7 +6,12 @@ package com.lanier.violet.data
  */
 object Constant {
 
-    const val MAIN_ITEM_INDEX_HOME = 0
-    const val MAIN_ITEM_INDEX_PET_BACKPACK = 1
-    const val MAIN_ITEM_INDEX_MINE = 2
+    object MMKVKey {
+
+        const val KEY_SYNC_SPIRIT_DATA_TIME = "key_sync_spirit_data_time"
+        const val KEY_SYNC_SKILL_DATA_TIME = "key_sync_skill_data_time"
+        const val KEY_SYNC_SCENE_DATA_TIME = "key_sync_scene_data_time"
+        const val KEY_SYNC_GAME_DATA_TIME = "key_sync_game_data_time"
+        const val KEY_SYNC_PROP_DATA_TIME = "key_sync_prop_data_time"
+    }
 }
