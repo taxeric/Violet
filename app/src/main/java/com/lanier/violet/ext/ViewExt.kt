@@ -1,6 +1,7 @@
 package com.lanier.violet.ext
 
 import android.view.View
+import com.google.android.material.tabs.TabLayout
 
 /**
  * Created by 幻弦让叶
@@ -25,3 +26,26 @@ fun View.invisible() {
 fun View.gone() {
     visibility = View.GONE
 }
+
+fun TabLayout.onTabListener(
+    onTabSelected: ((TabLayout.Tab?) -> Unit)? = null,
+    onTabUnselected: ((TabLayout.Tab?) -> Unit)? = null,
+    onTabReselected: ((TabLayout.Tab?) -> Unit)? = null,
+) : TabLayout.OnTabSelectedListener {
+    val onTabSelector = object : TabLayout.OnTabSelectedListener {
+        override fun onTabSelected(tab: TabLayout.Tab?) {
+            onTabSelected?.invoke(tab)
+        }
+
+        override fun onTabUnselected(tab: TabLayout.Tab?) {
+            onTabUnselected?.invoke(tab)
+        }
+
+        override fun onTabReselected(tab: TabLayout.Tab?) {
+            onTabReselected?.invoke(tab)
+        }
+    }
+    addOnTabSelectedListener(onTabSelector)
+    return onTabSelector
+}
+

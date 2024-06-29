@@ -27,6 +27,7 @@
     <string name="farm_plant">种植</string>
     <string name="farm_harvest">收获</string>
 
+    <string name="m_id_1">ID: %s</string>
     <string name="m_id">编号: %s</string>
     <string name="m_skill_pp">PP: %s</string>
     <string name="acquisition_time">获得时间: %s</string>
@@ -53,4 +54,12 @@
     <string name="db_sync_scene">同步场景数据库</string>
     <string name="db_sync_game">同步游戏数据库</string>
     <string name="db_sync_last_time">上次同步时间</string>
+
+    <string name="spirit">精灵</string>
+    <string name="skill">技能</string>
+    <string name="prop">道具</string>
+    <string name="search_hint">搜索</string>
+
+    <string name="power">威力: %s</string>
+    <string name="attack_speed">速度: %s</string>
 </resources>
