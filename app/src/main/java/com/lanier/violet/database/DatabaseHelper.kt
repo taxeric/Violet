@@ -1,4 +1,4 @@
-package com.lanier.violet.feature.db_manager
+package com.lanier.violet.database
 
 import com.lanier.violet.database.dao.GameDao
 import com.lanier.violet.database.dao.PropDao
@@ -16,7 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
-object DbSyncHelper {
+object DatabaseHelper {
 
     private val mainScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 

@@ -5,6 +5,7 @@ import com.lanier.violet.base.BaseAct
 import com.lanier.violet.data.Constant
 import com.lanier.violet.data.getStringFromMMKV
 import com.lanier.violet.data.putStringToMMKV
+import com.lanier.violet.database.DatabaseHelper
 import com.lanier.violet.database.VioletDatabase
 import com.lanier.violet.databinding.ActivityDbManagerBinding
 import com.lanier.violet.ext.toFormattedString
@@ -28,8 +29,8 @@ class DbManagerActivity(
         showSyncTime(Constant.MMKVKey.KEY_SYNC_SCENE_DATA_TIME, viewbinding.viewSyncScene)
         showSyncTime(Constant.MMKVKey.KEY_SYNC_GAME_DATA_TIME, viewbinding.viewSyncGame)
 
-        DbSyncHelper.cachePath = externalCacheDir!!.absolutePath
-        println(">>>> ${DbSyncHelper.cachePath}")
+        DatabaseHelper.cachePath = externalCacheDir!!.absolutePath
+        println(">>>> ${DatabaseHelper.cachePath}")
     }
 
     override fun initData() {
@@ -38,7 +39,7 @@ class DbManagerActivity(
     override fun onSync(view: DbSyncView) {
         when (view.id) {
             R.id.viewSyncSpirit -> {
-                DbSyncHelper.syncSpirit(
+                DatabaseHelper.syncSpirit(
                     dao = VioletDatabase.db.spiritDao(),
                     onStart = { showLoading() },
                     onError = {
@@ -52,7 +53,7 @@ class DbManagerActivity(
                 )
             }
             R.id.viewSyncSkill -> {
-                DbSyncHelper.syncSkill(
+                DatabaseHelper.syncSkill(
                     dao = VioletDatabase.db.skillDao(),
                     onStart = { showLoading() },
                     onError = {
@@ -66,7 +67,7 @@ class DbManagerActivity(
                 )
             }
             R.id.viewSyncProp -> {
-                DbSyncHelper.syncProps(
+                DatabaseHelper.syncProps(
                     dao = VioletDatabase.db.propDao(),
                     onStart = { showLoading() },
                     onError = {
@@ -80,7 +81,7 @@ class DbManagerActivity(
                 )
             }
             R.id.viewSyncScene -> {
-                DbSyncHelper.syncScene(
+                DatabaseHelper.syncScene(
                     dao = VioletDatabase.db.sceneDao(),
                     onStart = { showLoading() },
                     onError = {
@@ -94,7 +95,7 @@ class DbManagerActivity(
                 )
             }
             R.id.viewSyncGame -> {
-                DbSyncHelper.syncGame(
+                DatabaseHelper.syncGame(
                     dao = VioletDatabase.db.gameDao(),
                     onStart = { showLoading() },
                     onError = {
