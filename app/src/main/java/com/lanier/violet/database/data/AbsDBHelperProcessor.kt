@@ -1,9 +1,10 @@
 package com.lanier.violet.database.data
 
+import com.lanier.violet.ext.launchSafe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 abstract class AbsDBHelperProcessor {
 
@@ -11,14 +12,26 @@ abstract class AbsDBHelperProcessor {
         CoroutineScope(SupervisorJob() + Dispatchers.Main)
     }
 
+    suspend fun <T> suspendAction(
+        block: (() -> T?)?,
+    ) : T? {
+        val data = withContext(Dispatchers.IO) {
+            block?.invoke()
+        }
+        return data
+    }
+
     fun <T> asyncAction(
         block: (() -> T?)?,
-        check: (T?) -> Boolean,
+        check: (T) -> Boolean,
         onSuccess: (T) -> Unit,
         onFailure: (() -> Unit)? = null
     ) {
-        mainScope.launch {
-            block?.invoke()?.let {
+        mainScope.launchSafe {
+            val data = withContext(Dispatchers.IO) {
+                block?.invoke()
+            }
+            data?.let {
                 if (check(it)) {
                     onSuccess.invoke(it)
                 } else {

@@ -42,4 +42,7 @@ data class Spirit(
     @ColumnInfo(name = "src") val src: String,
     @ColumnInfo(name = "state") val state: String,
     @ColumnInfo(name = "catch_rate") val catchRate: String,
-)
+) {
+
+    fun validSpirit() = id.isNotEmpty()
+}
