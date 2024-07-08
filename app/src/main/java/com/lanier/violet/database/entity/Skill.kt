@@ -17,4 +17,7 @@ data class Skill(
     @ColumnInfo(name = "attack_type") val attackType: String,
     @ColumnInfo(name = "damage_type") val damageType: String,
     @ColumnInfo val src: String,
-)
+) {
+
+    fun invalidSkill() = id.isEmpty()
+}
