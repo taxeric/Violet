@@ -19,5 +19,5 @@ data class Skill(
     @ColumnInfo val src: String,
 ) {
 
-    fun invalidSkill() = id.isEmpty()
+    fun validSkill() = id.isNotEmpty()
 }

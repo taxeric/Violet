@@ -27,7 +27,7 @@ object SkillHelper : AbsDBHelperProcessor() {
     ) {
         asyncAction(
             block = { dao.getSkillById(id) },
-            check = { it!!.invalidSkill() },
+            check = { it.validSkill() },
             onSuccess = onSuccess,
             onFailure = onFailure
         )
