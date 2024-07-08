@@ -13,7 +13,8 @@ import com.lanier.violet.views.rv.ViewBindHolder
  */
 class PetBackpackAdapter : BaseViewBindingAdapter<ItemPetBackpackBinding, PetData>() {
 
-    private var mCurrentSelectedIndex = -1
+    var mCurrentSelectedIndex = -1
+        private set
 
     val currentSelectedPet: PetData?
         get() {

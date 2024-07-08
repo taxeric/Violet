@@ -10,7 +10,8 @@ import com.lanier.violet.databinding.FragmentPetBackpackBinding
 import com.lanier.violet.ext.collect
 import com.lanier.violet.ext.launchSafe
 import com.lanier.violet.ext.toFormattedString
-import com.lanier.violet.feature.main.event.PetBackpackHandleEvent
+import com.lanier.violet.feature.main.event.spirit.PetBackpackHandleEvent
+import com.lanier.violet.feature.main.event.spirit.SpiritStoreEvent
 import com.lanier.violet.feature.pet.data.PetData
 import com.lanier.violet.views.rv.BaseRVAdapter
 import com.lanier.violet.views.rv.OnItemClickListener
@@ -61,14 +62,45 @@ class PetBackpackFragment private constructor(
                 }
             }
         }
+        launchSafe {
+            collect<SpiritStoreEvent> {
+                if (it.success) {
+                    spiritBackpack()
+                } else {
+                    println("放入仓库失败")
+                }
+            }
+        }
         viewbinding.recyclerView.adapter = mAdapter
 
+        viewbinding.btnPutIntoStorage.setOnClickListener { store() }
+
+        spiritBackpack()
+    }
+
+    private fun spiritBackpack() {
         val command = buildString {
             append("95 27 00 00 00 0B 00 17")
             append(UserData.hexQQ)
             append("00 00 00 00 00 00 00 00")
         }
         RocoServerClient.sendCommand(command)
+    }
+
+    /**
+     * 放入仓库
+     */
+    private fun store() {
+        val index = mAdapter.mCurrentSelectedIndex
+        if (index != -1) {
+            val command = buildString {
+                append("95 27 00 00 00 0B 00 14")
+                append(UserData.hexQQ)
+                append("00 00 00 00 00 00 00 01 0")
+                append(index + 1)
+            }
+            RocoServerClient.sendCommand(command)
+        }
     }
 
     private fun refreshProfile(petData: PetData?) {

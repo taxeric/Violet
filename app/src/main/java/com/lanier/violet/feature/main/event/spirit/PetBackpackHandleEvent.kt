@@ -1,4 +1,4 @@
-package com.lanier.violet.feature.main.event
+package com.lanier.violet.feature.main.event.spirit
 
 /**
  * Created by 幻弦让叶

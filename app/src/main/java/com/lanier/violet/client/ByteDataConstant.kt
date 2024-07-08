@@ -20,4 +20,9 @@ object ByteDataConstant {
      * 宠物背包
      */
     const val PET_BACKPACK = "95270000000B0017"
+
+    /**
+     * 宠物入库
+     */
+    const val PET_STORE = "95270000000B0014"
 }

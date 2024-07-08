@@ -6,9 +6,10 @@ import com.lanier.violet.data.UserData
 import com.lanier.violet.ext.post
 import com.lanier.violet.feature.main.event.ClientEvent
 import com.lanier.violet.feature.main.event.FarmEvent
-import com.lanier.violet.feature.main.event.PetBackpackHandleEvent
+import com.lanier.violet.feature.main.event.spirit.PetBackpackHandleEvent
 import com.lanier.violet.feature.main.event.SceneEvent
 import com.lanier.violet.feature.main.event.UserInfoEvent
+import com.lanier.violet.feature.main.event.spirit.SpiritStoreEvent
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -215,6 +216,10 @@ object RocoServerClient {
                             val data = PetBackpackProcessor(message).process()
                             PetBackpackData.reset(data)
                             PetBackpackHandleEvent(true).post()
+                        }
+
+                        ByteDataConstant.PET_STORE -> {
+                            SpiritStoreEvent(true).post()
                         }
 
                         else -> {}
